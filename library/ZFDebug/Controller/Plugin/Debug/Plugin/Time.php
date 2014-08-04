@@ -11,16 +11,6 @@
  */
 
 /**
- * @see Zend_Session
- */
-require_once 'Zend/Session.php';
-
-/**
- * @see Zend_Session_Namespace
- */
-require_once 'Zend/Session/Namespace.php';
-
-/**
  * @category   ZFDebug
  * @package    ZFDebug_Controller
  * @subpackage Plugins
