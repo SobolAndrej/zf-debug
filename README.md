@@ -15,8 +15,17 @@ The available plugins at this point are:
 for custom memory measurements.
   * Log: Timing information of current request, time spent in action controller and custom timers. Also average, min and max time for requests.
   * Variables: View variables, request info and contents of `$_COOKIE`, `$_POST` and `$_SESSION`
+
+Instalation
+------------
+    {
+        "minimum-stability": "dev",
+        "require": {
+            "lciolecki/zf-debug" : "dev-master"
+        }
+    }
   
-Installation & Usage
+Usage
 ------------
 To install, place the folder 'ZFDebug' in your library path, next to the Zend
 folder. Then add the following method to your bootstrap class (in ZF1.8+):
