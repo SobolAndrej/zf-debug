@@ -55,22 +55,24 @@ Here is example configuration for using the Doctrine Plugin:
 
     protected function _initZFDebug()
     {
-        $options = array(
-            'plugins' => array(
-                'Variables',
-                'File',
-                'Memory',
-                'Time',
-                new ZFDebug_Controller_Plugin_Debug_Plugin_Doctrine(),
-                'Exception'
-            )
-        );
-
-        $ZFDebug = new ZFDebug_Controller_Plugin_Debug($options);
-        $frontController = Zend_Controller_Front::getInstance();
-        $frontController->registerPlugin($ZFDebug);
-
-        return $ZFDebug;
+    	if (APPLICATION_ENV === 'development') {
+	        $options = array(
+	            'plugins' => array(
+	                'Variables',
+	                'File',
+	                'Memory',
+	                'Time',
+	                new ZFDebug_Controller_Plugin_Debug_Plugin_Doctrine(),
+	                'Exception'
+	            )
+	        );
+	
+	        $ZFDebug = new ZFDebug_Controller_Plugin_Debug($options);
+	        $frontController = Zend_Controller_Front::getInstance();
+	        $frontController->registerPlugin($ZFDebug);
+	
+	        return $ZFDebug;
+        }
     }
 
 Doctrine2 Plugin
@@ -78,36 +80,35 @@ Doctrine2 Plugin
 
 Here is example configuration for using the Doctrine2 Plugin:
 
-    protected function _initZFDebug()
-	{
-		if (APPLICATION_ENV == 'development') {
-			$autoloader = Zend_Loader_Autoloader::getInstance();
-			$autoloader->registerNamespace('ZFDebug');
-			$em = $this->bootstrap('doctrine')->getResource('doctrine')->getEntityManager();
-			$em->getConnection()->getConfiguration()->setSQLLogger(new \Doctrine\DBAL\Logging\DebugStack());
-			
-			$options = array(
-				'plugins' => array(
-					'Variables',
-					'ZFDebug_Controller_Plugin_Debug_Plugin_Doctrine2'	=> array(
-						'entityManagers' => array($em),
-					),
-					'File'			=> array('basePath' => APPLICATION_PATH . '/application'),
-					//'Cache'		=> array('backend' => $cache->getBackend()),
-					'Exception',
-					'Html',
-					'Memory',
-					'Time',
-					'Registry',
-				)
-			);
-			
-			$debug = new ZFDebug_Controller_Plugin_Debug($options);
-			$this->bootstrap('frontController');
-			$frontController = $this->getResource('frontController');
-			$frontController->registerPlugin($debug);
-		}
-	}
+    protected function _initDebug()
+    {
+        if (APPLICATION_ENV === 'development') {
+            $em = Zend_Registry::get('em');
+            $em->getConnection()->getConfiguration()->setSQLLogger(new \Doctrine\DBAL\Logging\DebugStack());
+
+            $cacheResource = $this->getPluginResource('cachemanager');
+            $cacheManager = $cacheResource->getCacheManager();
+            $cache = $cacheManager->getCache('data');
+            $cacheBackend = $cache->getBackend();
+
+            $options = array(
+                'plugins' => array(
+                    'Variables',
+                    'ZFDebug_Controller_Plugin_Debug_Plugin_Doctrine2' => array(
+                        'entityManagers' => array(Zend_Registry::get('em')),
+                    ),
+                    'Cache' => array('backend' => $cacheBackend),
+                    'File' => array('basePath' => APPLICATION_PATH . '/application'),
+                    'Exception',
+                    'Html',
+                    'Memory',
+                    'Time',
+                )
+            );
+
+            Zend_Controller_Front::getInstance()->registerPlugin(new ZFDebug_Controller_Plugin_Debug($options));
+        }
+    }
 
 
 Further documentation will follow as the github move progresses.
