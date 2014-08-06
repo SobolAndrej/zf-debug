@@ -48,6 +48,30 @@ folder. Then add the following method to your bootstrap class (in ZF1.8+):
 	    $frontController = $this->getResource('frontController');
 	    $frontController->registerPlugin($debug);
 	}
+	
+Doctrine 1 Plugin
+------------
+Here is example configuration for using the Doctrine Plugin:
+
+    protected function _initZFDebug()
+    {
+        $options = array(
+            'plugins' => array(
+                'Variables',
+                'File',
+                'Memory',
+                'Time',
+                new ZFDebug_Controller_Plugin_Debug_Plugin_Doctrine(),
+                'Exception'
+            )
+        );
+
+        $ZFDebug = new ZFDebug_Controller_Plugin_Debug($options);
+        $frontController = Zend_Controller_Front::getInstance();
+        $frontController->registerPlugin($ZFDebug);
+
+        return $ZFDebug;
+    }
 
 Doctrine2 Plugin
 ------------
