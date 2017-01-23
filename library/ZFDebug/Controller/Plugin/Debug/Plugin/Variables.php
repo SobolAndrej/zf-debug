@@ -17,28 +17,26 @@
  * @copyright  Copyright (c) 2008-2009 ZF Debug Bar Team (http://code.google.com/p/zfdebug)
  * @license    http://code.google.com/p/zfdebug/wiki/License     New BSD License
  */
-class ZFDebug_Controller_Plugin_Debug_Plugin_Variables extends ZFDebug_Controller_Plugin_Debug_Plugin implements ZFDebug_Controller_Plugin_Debug_Plugin_Interface
+class ZFDebug_Controller_Plugin_Debug_Plugin_Variables extends ZFDebug_Controller_Plugin_Debug_Plugin
+    implements ZFDebug_Controller_Plugin_Debug_Plugin_Interface
 {
     /**
      * Contains plugin identifier name
      *
      * @var string
      */
-    protected $_identifier = 'variables';
+    protected $identifier = 'variables';
 
     /**
-     * @var Zend_Controller_Request_Abstract
+     * @var Zend_Controller_Request_Http
      */
-    protected $_request;
+    protected $request;
 
     /**
      * Create ZFDebug_Controller_Plugin_Debug_Plugin_Variables
-     *
-     * @return void
      */
     public function __construct()
     {
-
     }
 
     /**
@@ -48,7 +46,7 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Variables extends ZFDebug_Controlle
      */
     public function getIdentifier()
     {
-        return $this->_identifier;
+        return $this->identifier;
     }
     
     /**
@@ -68,7 +66,7 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Variables extends ZFDebug_Controlle
      */
     public function getTab()
     {
-        return ' Variables';
+        return 'Variables';
     }
 
     /**
@@ -78,10 +76,10 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Variables extends ZFDebug_Controlle
      */
     public function getPanel()
     {
-        $this->_request = Zend_Controller_Front::getInstance()->getRequest();
+        $this->request = Zend_Controller_Front::getInstance()->getRequest();
         $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper('viewRenderer');
         if ($viewRenderer->view && method_exists($viewRenderer->view, 'getVars')) {
-            $viewVars = $this->_cleanData($viewRenderer->view->getVars());
+            $viewVars = $this->cleanData($viewRenderer->view->getVars());
         } else {
             $viewVars = "No 'getVars()' method in view class";
         }
@@ -89,25 +87,23 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Variables extends ZFDebug_Controlle
         $vars .= '<h4>View variables</h4>'
               . '<div id="ZFDebug_vars" style="margin-left:-22px">' . $viewVars . '</div>'
               . '<h4>Request parameters</h4>'
-              . '<div id="ZFDebug_requests" style="margin-left:-22px">' . $this->_cleanData($this->_request->getParams()) . '</div>';
+              . '<div id="ZFDebug_requests" style="margin-left:-22px">' . $this->cleanData($this->request->getParams()) . '</div>';
         $vars .= '</div><div style="width:45%;float:left;">';
-        if ($this->_request->isPost())
+        if ($this->request->isPost())
         {
             $vars .= '<h4>Post variables</h4>'
-                   . '<div id="ZFDebug_post" style="margin-left:-22px">' . $this->_cleanData($this->_request->getPost()) . '</div>';
+                   . '<div id="ZFDebug_post" style="margin-left:-22px">' . $this->cleanData($this->request->getPost()) . '</div>';
         }
 
         $registry = Zend_Registry::getInstance();
         $vars .= '<h4>Zend Registry</h4>';
         $registry->ksort();
-        $vars .= '<div id="ZFDebug_registry" style="margin-left:-22px">' . $this->_cleanData($registry) . '</div>';
+        $vars .= '<div id="ZFDebug_registry" style="margin-left:-22px">' . $this->cleanData($registry) . '</div>';
         
-        $cookies = $this->_request->getCookie();
+        $cookies = $this->request->getCookie();
         $vars .= '<h4>Cookies</h4>'
-               . '<div id="ZFDebug_cookie" style="margin-left:-22px">' . $this->_cleanData($cookies) . '</div>';
-        
-        $vars .= '</div><div style="clear:both">&nbsp;</div>';
+            . '<div id="ZFDebug_cookie" style="margin-left:-22px">' . $this->cleanData($cookies) . '</div>'
+            . '</div><div style="clear:both">&nbsp;</div>';
         return $vars;
     }
-
 }

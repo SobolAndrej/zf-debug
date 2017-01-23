@@ -1,11 +1,11 @@
 {
-    "name": "lciolecki/zf-debug",
+    "name": "sobolandrej/zf-debug",
     "description": "ZFDebug - a debug bar for Zend Framework",
     "type": "library",
     "keywords": [
         "php", "ZFDebug", "doctrine", "doctrine2", "Zend Framework"
     ],
-    "homepage": "https://github.com/lciolecki/zf-debug",
+    "homepage": "https://github.com/sobolandrej/zf-debug",
     "license": "BSD-3-Clause",
     "require": {
         "php": ">=5.4",

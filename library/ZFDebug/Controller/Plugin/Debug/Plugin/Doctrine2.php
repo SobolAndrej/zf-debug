@@ -17,8 +17,7 @@
  * @copyright  Copyright (c) 2008-2011 ZF Debug Bar Team (http://code.google.com/p/zfdebug)
  * @license    http://code.google.com/p/zfdebug/wiki/License     New BSD License
  */
-class ZFDebug_Controller_Plugin_Debug_Plugin_Doctrine2
-    extends ZFDebug_Controller_Plugin_Debug_Plugin
+class ZFDebug_Controller_Plugin_Debug_Plugin_Doctrine2 extends ZFDebug_Controller_Plugin_Debug_Plugin
     implements ZFDebug_Controller_Plugin_Debug_Plugin_Interface
 {
 
@@ -27,33 +26,32 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Doctrine2
      *
      * @var string
      */
-    protected $_identifier = 'doctrine2';
+    protected $identifier = 'doctrine2';
 
     /**
      * Contains entityManagers
      * @var array
      */
-    protected $_em = array();
+    protected $em = [];
     
     /**
      * If true, try to use sqlparse to prettify queries
      * requires sqlparse to be installed on the server.
-     * 
+     *
      * @see http://code.google.com/p/python-sqlparse/
      * @var bool
      */
-    static public $_sqlParseEnabled = false;
+    public static $sqlParseEnabled = false;
 
     /**
      * Create ZFDebug_Controller_Plugin_Debug_Plugin_Variables
      *
-     * @param array $options 
-     * @return void
+     * @param array $options
      */
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
         if (isset($options['entityManagers'])) {
-            $this->_em = $options['entityManagers'];
+            $this->em = $options['entityManagers'];
         }
     }
 
@@ -73,7 +71,7 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Doctrine2
      */
     public function getIdentifier()
     {
-        return $this->_identifier;
+        return $this->identifier;
     }
 
     /**
@@ -83,22 +81,22 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Doctrine2
      */
     public function getTab()
     {
-        if (!is_array($this->_em) || !count($this->_em)) {
+        if (!is_array($this->em) || !count($this->em)) {
             return 'No entitymanagers available';
         } else {
-            foreach ($this->_em as $em) {
+            foreach ($this->em as $em) {
                 if (!$em instanceof \Doctrine\ORM\EntityManager) {
-                    return "the entitymanager you passed is not an instance of \Doctrine\\ORM\\EntityManager";
+                    return "the entitymanager you passed is not an instance of \\Doctrine\\ORM\\EntityManager";
                 }
             }
         }
 
         $adapterInfo = array();
 
-        foreach ($this->_em as $em) {
+        foreach ($this->em as $em) {
             if ($logger = $em->getConnection()->getConfiguration()->getSqlLogger()) {
                 $totalTime = 0;
-                foreach($logger->queries as $query) {
+                foreach ($logger->queries as $query) {
                     $totalTime += $query['executionMS'];
                 }
                 $adapterInfo[] = count($logger->queries) . ' in ' . round($totalTime * 1000, 2) . ' ms';
@@ -119,15 +117,16 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Doctrine2
      */
     public function getPanel()
     {
-        if (!$this->_em)
+        if (!$this->em) {
             return '';
+        }
 
         $html = '<h4>Doctrine2 queries - Doctrine2 (Common v' . Doctrine\Common\Version::VERSION .
                 ' | DBAL v' . Doctrine\DBAL\Version::VERSION .
                 ' | ORM v' . Doctrine\ORM\Version::VERSION .
                 ')</h4>';
 
-        foreach ($this->_em as $name => $em) {
+        foreach ($this->em as $name => $em) {
             $html .= '<h4>EntityManager ' . $name . '</h4>';
             if ($logger = $em->getConnection()->getConfiguration()->getSqlLogger()) {
                 $html .= $this->getProfile($logger);
@@ -147,39 +146,39 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Doctrine2
     protected function getProfile($logger)
     {
         $queries = '<table cellspacing="0" cellpadding="0" width="100%">';
-        foreach($logger->queries as $query) {
-
+        foreach ($logger->queries as $query) {
             $queries .= "<tr>\n<td style='text-align:right;padding-right:2em;' nowrap>\n"
-                               . sprintf('%0.2f', round($query['executionMS']*1000, 2))
-                               . "ms</td>\n<td>";
+                . sprintf('%0.2f', round($query['executionMS'] * 1000, 2))
+                . "ms</td>\n<td>";
             $params = array();
-            if(!empty($query['params'])) {
-              $params = $query['params'];
-              array_walk($params, array($this, '_addQuotes'));
+            if (!empty($query['params'])) {
+                $params = $query['params'];
+                array_walk($params, array($this, '_addQuotes'));
             }
             $paramCount = count($params);
-            
+
             if ($paramCount) {
                 $qry = htmlspecialchars(preg_replace(array_fill(0, $paramCount, '/\?/'), $params, $query['sql'], 1));
             } else {
                 $qry = htmlspecialchars($query['sql']);
             }
-            if (self::$_sqlParseEnabled) {
-            	$qry = self::prettifySql($qry);
+            if (self::$sqlParseEnabled) {
+                $qry = self::prettifySql($qry);
             }
             $queries .= $qry . "</td>\n</tr>\n";
         }
         $queries .= "</table>\n";
         return $queries;
     }
-    
-    static public function prettifySql($qry) {
-    	$cmd = 'echo ' . escapeshellarg((string) $qry) . ' | sqlformat - --keywords=upper -r';
-    	exec($cmd, $output, $error);
-    	if (!$error) {
-    		$qry = '<pre>' . implode(PHP_EOL, $output) . '</pre>';
-    	}
-    	return $qry;
+
+    public static function prettifySql($qry)
+    {
+        $cmd = 'echo ' . escapeshellarg((string)$qry) . ' | sqlformat - --keywords=upper -r';
+        exec($cmd, $output, $error);
+        if (!$error) {
+            $qry = '<pre>' . implode(PHP_EOL, $output) . '</pre>';
+        }
+        return $qry;
     }
 
     /**
@@ -190,14 +189,15 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Doctrine2
      */
     protected function _addQuotes(&$value, $key)
     {
-    	if (is_scalar($value)) {
-    		$value = "'" . $value . "'";
-    	} else if ($value instanceof DateTime) {
-    		// Try to accommodate for Doctrine's use of more advanced data types
-    		$value = "'" . $value->format('c') . "'";
-    	} else {
-    		$value = "Object of type '" . get_class($value) . "'";
-    	}
+        if (is_scalar($value)) {
+            $value = "'" . $value . "'";
+        } else {
+            if ($value instanceof DateTime) {
+                // Try to accommodate for Doctrine's use of more advanced data types
+                $value = "'" . $value->format('c') . "'";
+            } else {
+                $value = "Object of type '" . get_class($value) . "'";
+            }
+        }
     }
-
 }

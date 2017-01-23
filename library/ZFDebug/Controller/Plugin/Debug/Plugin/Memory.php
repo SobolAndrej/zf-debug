@@ -17,8 +17,7 @@
  * @copyright  Copyright (c) 2008-2009 ZF Debug Bar Team (http://code.google.com/p/zfdebug)
  * @license    http://code.google.com/p/zfdebug/wiki/License     New BSD License
  */
-class ZFDebug_Controller_Plugin_Debug_Plugin_Memory 
-    extends Zend_Controller_Plugin_Abstract 
+class ZFDebug_Controller_Plugin_Debug_Plugin_Memory extends Zend_Controller_Plugin_Abstract
     implements ZFDebug_Controller_Plugin_Debug_Plugin_Interface
 {
     /**
@@ -26,20 +25,21 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Memory
      *
      * @var string
      */
-    protected $_identifier = 'memory';
-    
-    protected $_logger;
+    protected $identifier = 'memory';
+
+    /**
+     * @var ZFDebug_Controller_Plugin_Debug_Plugin_Log
+     */
+    protected $logger;
 
     /**
      * Creating memory plugin
-     * 
-     * @return void
      */
     public function __construct()
     {
         Zend_Controller_Front::getInstance()->registerPlugin($this);
     }
-    
+
     /**
      * Get the ZFDebug logger
      *
@@ -47,12 +47,12 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Memory
      */
     public function getLogger()
     {
-        if (!$this->_logger) {
-            $this->_logger = Zend_Controller_Front::getInstance()
+        if (!$this->logger) {
+            $this->logger = Zend_Controller_Front::getInstance()
                 ->getPlugin('ZFDebug_Controller_Plugin_Debug')->getPlugin('Log');
-            $this->_logger->getLog()->addPriority('Memory', 8);
+            $this->logger->getLog()->addPriority('Memory', 8);
         }
-        return $this->_logger;
+        return $this->logger;
     }
 
     /**
@@ -62,7 +62,7 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Memory
      */
     public function getIdentifier()
     {
-        return $this->_identifier;
+        return $this->identifier;
     }
     
     /**
@@ -82,10 +82,9 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Memory
      */
     public function getTab()
     {
-        // if (function_exists('memory_get_peak_usage')) {
-        //     return round(memory_get_peak_usage()/1024) . 'K';//' of '.ini_get("memory_limit");
-        // }
-        // return 'MemUsage n.a.';
+        return function_exists('memory_get_peak_usage')
+            ? round(memory_get_peak_usage() / 1024) . 'K'
+            : 'MemUsage n.a.';
     }
 
     /**
@@ -96,16 +95,5 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Memory
     public function getPanel()
     {
         return '';
-    }
-    
-    /**
-     * Sets a memory mark identified with $name
-     *
-     * @param string $name
-     * @deprecated Use ZFDebug_Controller_Plugin_Debug_Plugin_Log 
-     */
-    public function mark($name) {
-        $this->getLogger()->mark("$name");
-        trigger_error("ZFDebug Memory plugin is deprecated, use the Log plugin");
     }
 }

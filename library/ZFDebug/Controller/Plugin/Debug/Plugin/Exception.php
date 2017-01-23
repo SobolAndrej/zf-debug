@@ -17,43 +17,45 @@
  * @copyright  Copyright (c) 2008-2009 ZF Debug Bar Team (http://code.google.com/p/zfdebug)
  * @license    http://code.google.com/p/zfdebug/wiki/License     New BSD License
  */
-class ZFDebug_Controller_Plugin_Debug_Plugin_Exception 
-    extends Zend_Controller_Plugin_Abstract 
+class ZFDebug_Controller_Plugin_Debug_Plugin_Exception extends Zend_Controller_Plugin_Abstract
     implements ZFDebug_Controller_Plugin_Debug_Plugin_Interface
 {
-    protected static $_logger;
-    
+    protected static $logger;
+
     /**
      * Contains plugin identifier name
      *
      * @var string
      */
-    protected $_identifier = 'exception';
+    protected $identifier = 'exception';
 
     /**
      * Contains any errors
      *
-     * @var param array
+     * @var array
      */
-    static $errors = array();
+    public static $errors = [];
 
-    protected $_rendered = false;
+    /**
+     * @var bool
+     */
+    protected $rendered = false;
 
     /**
      * Get the ZFDebug logger
      *
-     * @return Zend_Log
+     * @return Zend_Log|false
      */
     public static function getLogger()
     {
-        if (!self::$_logger) {
-            if ($zfdebug = Zend_Controller_Front::getInstance()->getPlugin('ZFDebug_Controller_Plugin_Debug')) {
-                self::$_logger = $zfdebug->getPlugin('Log')->getLog();
+        if (!self::$logger) {
+            if ($zfDebug = Zend_Controller_Front::getInstance()->getPlugin('ZFDebug_Controller_Plugin_Debug')) {
+                self::$logger = $zfDebug->getPlugin('Log')->getLog();
             } else {
                 return false;
             }
         }
-        return self::$_logger;
+        return self::$logger;
     }
 
     /**
@@ -63,9 +65,9 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Exception
      */
     public function getIdentifier()
     {
-        return $this->_identifier;
+        return $this->identifier;
     }
-    
+
     /**
      * Returns the base64 encoded icon
      *
@@ -78,14 +80,12 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Exception
 
     /**
      * Creates Error Plugin ans sets the Error Handler
-     *
-     * @return void
      */
     public function __construct()
     {
         Zend_Controller_Front::getInstance()->registerPlugin($this);
-        
-        set_error_handler(array($this , 'errorHandler'));
+
+        set_error_handler([$this, 'errorHandler']);
     }
 
     /**
@@ -105,10 +105,10 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Exception
      */
     public function getPanel()
     {
-        $this->_rendered = true;
+        $this->rendered = true;
         return '';
     }
-    
+
     /**
      * Debug Bar php error handler
      *
@@ -120,8 +120,9 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Exception
      */
     public static function errorHandler($level, $message, $file, $line)
     {
-        if (! ($level & error_reporting()))
+        if (!($level & error_reporting())) {
             return false;
+        }
         switch ($level) {
             case E_NOTICE:
             case E_USER_NOTICE:
@@ -144,29 +145,26 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Exception
                 break;
         }
         self::$errors[] = array(
-            'type' => $type , 
-            'message' => $message , 
-            'file' => $file , 
-            'line' => $line,
-            'trace' => debug_backtrace()
+            'type'    => $type,
+            'message' => $message,
+            'file'    => $file,
+            'line'    => $line,
+            'trace'   => debug_backtrace()
         );
 
         $message = sprintf(
-            "%s in %s on line %d", 
-            $message, 
+            "%s in %s on line %d",
+            $message,
             str_replace($_SERVER['DOCUMENT_ROOT'], '', $file),
             $line
         );
-        // if (ini_get('log_errors'))
-        //     error_log(sprintf("%s: %s", $type, $message));
 
         if (($logger = self::getLogger())) {
             $logger->$method($message);
         }
         return false;
     }
-    
-    
+
     /**
      * Defined by Zend_Controller_Plugin_Abstract
      *
@@ -186,7 +184,7 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Exception
     public function routeShutdown(Zend_Controller_Request_Abstract $request)
     {
     }
-    
+
     /**
      * Defined by Zend_Controller_Plugin_Abstract
      *
@@ -196,7 +194,7 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Exception
     public function preDispatch(Zend_Controller_Request_Abstract $request)
     {
     }
-    
+
     /**
      * Defined by Zend_Controller_Plugin_Abstract
      *
@@ -206,7 +204,7 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Exception
     public function postDispatch(Zend_Controller_Request_Abstract $request)
     {
     }
-    
+
     /**
      * Defined by Zend_Controller_Plugin_Abstract
      *
@@ -226,26 +224,30 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Exception
     public function dispatchLoopShutdown()
     {
         $response = Zend_Controller_Front::getInstance()->getResponse();
+        /** @var Exception $e */
         foreach ($response->getException() as $e) {
-            $exception = get_class($e) . ': ' . $e->getMessage() 
-                       . ' thrown in ' . str_replace($_SERVER['DOCUMENT_ROOT'], '', $e->getFile())
-                       . ' on line ' . $e->getLine();
+            $exception = get_class($e) . ': ' . $e->getMessage()
+                . ' thrown in ' . str_replace($_SERVER['DOCUMENT_ROOT'], '', $e->getFile())
+                . ' on line ' . $e->getLine();
             $exception .= '<ol>';
             foreach ($e->getTrace() as $t) {
                 $func = $t['function'] . '()';
-                if (isset($t['class']))
+                if (isset($t['class'])) {
                     $func = $t['class'] . $t['type'] . $func;
-                if (! isset($t['file']))
+                }
+                if (!isset($t['file'])) {
                     $t['file'] = 'unknown';
-                if (! isset($t['line']))
+                }
+                if (!isset($t['line'])) {
                     $t['line'] = 'n/a';
-                $exception .= '<li>' . $func . ' in ' 
-                       . str_replace($_SERVER['DOCUMENT_ROOT'], '', $t['file']) 
-                       . ' on line ' . $t['line'] . '</li>';
+                }
+                $exception .= '<li>' . $func . ' in '
+                    . str_replace($_SERVER['DOCUMENT_ROOT'], '', $t['file']) . ' on line ' . $t['line'] . '</li>';
             }
             $exception .= '</ol>';
-            if ($logger = self::getLogger())
+            if ($logger = self::getLogger()) {
                 $logger->crit($exception);
+            }
         }
     }
 }

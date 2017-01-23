@@ -1,0 +1,117 @@
+html, body {
+    height: 100%
+}
+
+#ZFDebug, #ZFDebug div, #ZFDebug span, #ZFDebug h1, #ZFDebug h2, #ZFDebug h3, #ZFDebug h4, #ZFDebug h5, #ZFDebug h6, #ZFDebug p, #ZFDebug blockquote, #ZFDebug pre, #ZFDebug a, #ZFDebug code, #ZFDebug em, #ZFDebug img, #ZFDebug strong, #ZFDebug dl, #ZFDebug dt, #ZFDebug dd, #ZFDebug ol, #ZFDebug ul, #ZFDebug li, #ZFDebug table, #ZFDebug tbody, #ZFDebug tfoot, #ZFDebug thead, #ZFDebug tr, #ZFDebug th, #ZFDebug td {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: 0;
+    font-size: 100%;
+    vertical-align: baseline;
+    background: transparent;
+}
+
+#ZFDebug {
+    width: 100%;
+    font: 12px/1.4em Lucida Grande, Lucida Sans Unicode, sans-serif;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    color: #FFF;
+    background: #000000;
+    z-index: 2718281828459045;
+}
+
+#ZFDebug p {
+    margin: 1em 0
+}
+
+#ZFDebug a {
+    color: #FFFFFF
+}
+
+#ZFDebug tr {
+    color: #FFFFFF;
+}
+
+#ZFDebug td {
+    vertical-align: top;
+    padding-bottom: 1em
+}
+
+#ZFDebug ol {
+    margin: 1em 0 0 0;
+    padding: 0;
+    list-style-position: inside;
+}
+
+#ZFDebug li {
+    margin: 0;
+}
+
+#ZFDebug.collapsed {
+    width: 32px;
+    height: 32px;
+    border-radius: 0 32px 32px 0;
+    border: 1px solid black;
+    border-bottom: none;
+}
+
+#ZFDebug .clickable {
+    cursor: pointer
+}
+
+#ZFDebug #ZFDebug_info {
+    display: block;
+    height: 32px;
+}
+
+#ZFDebug #ZFDebugResize {
+    cursor: row-resize;
+    height: 1px;
+    border-top: 1px solid #1a1a1a;
+    border-bottom: 1px solid #333333;
+}
+
+#ZFDebug .ZFDebug_span {
+    padding: 0 15px;
+    line-height: 32px;
+    display: block;
+    float: left
+}
+
+#ZFDebug .ZFDebug_span.padding-right-0 {
+    padding: 0 0 0 10px;
+    cursor: pointer;
+}
+
+#ZFDebug .align-middle {
+    vertical-align: middle;
+}
+
+#ZFDebug .ZFDebug_panel {
+    padding: 0 15px 15px 15px;
+    font: 11px/1.4em Menlo, Monaco, Lucida Console, monospace;
+    text-align: left;
+    overflow: auto;
+    display: none;
+}
+
+#ZFDebug h4 {
+    font: bold 12px/1.4em Menlo, Monaco, Lucida Console, monospace;
+    margin: 1em 0;
+}
+
+#ZFDebug .ZFDebug_active {
+    background: #1a1a1a;
+}
+
+#ZFDebug .ZFDebug_panel .pre {
+    margin: 0 0 0 22px
+}
+
+#ZFDebug_exception {
+    border: 1px solid #CD0A0A;
+    display: block;
+}

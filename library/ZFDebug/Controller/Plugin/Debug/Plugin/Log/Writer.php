@@ -19,24 +19,41 @@
  */
 class ZFDebug_Controller_Plugin_Debug_Plugin_Log_Writer extends Zend_Log_Writer_Abstract
 {
-    protected $_messages = array();
-    protected $_errors = 0;
-    
+    /**
+     * @var array
+     */
+    protected $messages = [];
+
+    /**
+     * @var int
+     */
+    protected $errors = 0;
+
+    /**
+     * @param array|Zend_Config $config
+     * @return ZFDebug_Controller_Plugin_Debug_Plugin_Log_Writer
+     */
     public static function factory($config)
     {
         return new self();
     }
-    
+
+    /**
+     * @return array
+     */
     public function getMessages()
     {
-        return $this->_messages;
+        return $this->messages;
     }
-    
+
+    /**
+     * @return int
+     */
     public function getErrorCount()
     {
-        return $this->_errors;
+        return $this->errors;
     }
-    
+
     /**
      * Write a message to the log.
      *
@@ -45,7 +62,6 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Log_Writer extends Zend_Log_Writer_
      */
     protected function _write($event)
     {
-        // $output = '<table cellspacing="10">';
         $output = '<tr>';
         $output .= '<td style="color:%color%;text-align:right;padding-right:1em">%priorityName%</td>';
         $output .= '<td style="color:%color%;text-align:right;padding-right:1em">%memory%</td>';
@@ -57,10 +73,10 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Log_Writer extends Zend_Log_Writer_
         }
         if ($event['priority'] < 6) {
             $event['color'] = '#fd9600';
-        } 
+        }
         if ($event['priority'] < 5) {
             $event['color'] = 'red';
-            $this->_errors++;
+            $this->errors++;
         }
 
         if ($event['priority'] == ZFDebug_Controller_Plugin_Debug_Plugin_Log::ZFLOG) {
@@ -75,16 +91,14 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Log_Writer extends Zend_Log_Writer_
         }
         foreach ($event as $name => $value) {
             if ('message' == $name) {
-                $measure = '&nbsp;';
-                if ((is_object($value) && !method_exists($value,'__toString'))) {
+                if ((is_object($value) && !method_exists($value, '__toString'))) {
                     $value = gettype($value);
                 } elseif (is_array($value)) {
-                    $measure = $value[0];
                     $value = $value[1];
                 }
             }
             $output = str_replace("%$name%", $value, $output);
         }
-        $this->_messages[] = $output;
+        $this->messages[] = $output;
     }
 }
