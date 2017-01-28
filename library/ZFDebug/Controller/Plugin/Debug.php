@@ -196,7 +196,7 @@ class ZFDebug_Controller_Plugin_Debug extends Zend_Controller_Plugin_Abstract
         }
 
         $html = "<div id='ZFDebug_info'>
-                    <span class='ZFDebug_span padding-right-0' onclick='ZFDebugPanel(\"collapse\");'>
+                    <span class='ZFDebug_span special' onclick='ZFDebugPanel(\"collapse\");'>
                         <img class='align-middle' src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAABHElEQVQoFZ2SMUsDQRCFN6eRIIIS0MZW0gUs72orayvh/C3HNfkXV/kftEhz3V0pigghrc0VQdsYiO/b3MAaYgh58HZ2387czt6+jvuLvpaX4oV41m59KTbipzhrNdexieKVOBBPAy2cfmsxEaeIBwwCRdfiMYt/0JNOJ3NxFmmgPU7qii7P8yExRKCRQy41jsR7qITRUqiq6sk05mjsmaY45I43Ii14KPEhjuPbuq6fEWyeJMnjKsOPDYV34lEgOitG4wNrRchz7rgXDlXFO21tVR24tVOp2e/n8I4L8VzslWXZRFE0SdN0rLVHURSvaFmWvbUSRvgw55gB/Fu2CZvCj8QXcWrOwYM44kTEIZvASe+it5ydaIk7m/wXTbV0eSnRtrUAAAAASUVORK5CYII='>
                     </span>";
 
@@ -232,8 +232,7 @@ class ZFDebug_Controller_Plugin_Debug extends Zend_Controller_Plugin_Abstract
         foreach ($this->plugins as $plugin) {
             if ($panel = $plugin->getPanel()) {
                 /* @var $plugin ZFDebug_Controller_Plugin_Debug_Plugin_Interface */
-                $html .= "<div id='ZFDebug_{$plugin->getIdentifier()}' class='ZFDebug_panel'
-                            name='ZFDebug_panel'>$panel</div>";
+                $html .= "<div id='ZFDebug_{$plugin->getIdentifier()}' class='ZFDebug_panel'>$panel</div>";
             }
         }
 
@@ -322,7 +321,7 @@ class ZFDebug_Controller_Plugin_Debug extends Zend_Controller_Plugin_Abstract
     protected function headerOutput()
     {
         $collapsed = isset($_COOKIE['ZFDebugCollapsed']) ? $_COOKIE['ZFDebugCollapsed'] : '';
-        $boxHeight = $collapsed ? (isset($_COOKIE['ZFDebugHeight']) ? $_COOKIE['ZFDebugHeight'] : '240') : '32';
+        $boxHeight = isset($_COOKIE['ZFDebugPanelCollapsed']) ? '32' : ($collapsed ? '32' : '240');
         $panelSize = ($boxHeight - 50) . 'px';
 
         return "<style type='text/css'>

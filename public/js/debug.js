@@ -43,33 +43,35 @@ function ZFDebugResize() {
 var ZFDebugCurrent = null;
 
 function ZFDebugPanel(name) {
-    var container = document.getElementById("ZFDebug");
-
     if (name == 'collapse') {
-        if (container.className == "collapsed") {
-            container.className = "";
+        if (document.getElementById("ZFDebug").className == "collapsed") {
+            document.getElementById("ZFDebug").className = "";
             document.cookie = "ZFDebugPanelCollapsed=;path=/;expires=" + (new Date(0)).toUTCString();
         } else {
-            container.className = "collapsed";
+            document.getElementById("ZFDebug").className = "collapsed";
             document.cookie = "ZFDebugPanelCollapsed=;expires=;path=/";
-            ZFDebugCurrent = name;
         }
-    }
-
-    if (ZFDebugCurrent == name) {
+        document.getElementById("ZFDebug").style.height = "32px";
+        document.getElementById("ZFDebug_offset").style.height = "32px";
+        ZFDebugCurrent = null;
+    } else if (ZFDebugCurrent == name) {
         document.getElementById("ZFDebug").style.height = "32px";
         document.getElementById("ZFDebug_offset").style.height = "32px";
         ZFDebugCurrent = null;
         document.cookie = "ZFDebugCollapsed=;expires=;path=/";
     } else {
+        if (document.getElementById("ZFDebug").className == "") {
+            window.zfdebugHeight = 240;
+        }
         document.getElementById("ZFDebug").style.height = window.zfdebugHeight + "px";
         document.getElementById("ZFDebug_offset").style.height = window.zfdebugHeight + "px";
         ZFDebugCurrent = name;
+
         document.cookie = "ZFDebugCollapsed=" + name + ";expires=;path=/";
     }
 
-    var panels = container.children;
-    for (var i = 0; i < container.childElementCount; i++) {
+    var panels = document.getElementById("ZFDebug").children;
+    for (var i = 0; i < document.getElementById("ZFDebug").childElementCount; i++) {
         if (panels[i].className.indexOf("ZFDebug_panel") == -1)
             continue;
 

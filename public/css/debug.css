@@ -78,8 +78,8 @@
     float: left
 }
 
-#ZFDebug .ZFDebug_span.padding-right-0 {
-    padding: 0 0 0 10px;
+#ZFDebug .ZFDebug_span.special {
+    padding: 0 10px;
     cursor: pointer;
 }
 
