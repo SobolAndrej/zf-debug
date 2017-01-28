@@ -52,8 +52,8 @@ function ZFDebugPanel(name) {
         } else {
             container.className = "collapsed";
             document.cookie = "ZFDebugPanelCollapsed=;expires=;path=/";
+            ZFDebugCurrent = name;
         }
-        ZFDebugCurrent = name;
     }
 
     if (ZFDebugCurrent == name) {
