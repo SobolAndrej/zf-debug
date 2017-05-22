@@ -21,13 +21,6 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
             // Register ZFDebug with the front controller
             $front->registerPlugin($zfDebug);
         }
-//        In application.ini do the following:
-//
-//        [development : production]
-//        zfdebug.plugins.Variables = null
-//        zfdebug.plugins.Time = null
-//        zfdebug.plugins.Memory = null
-//        ...
 //
 //        Plugins that take objects as parameters like Database and Cache
 //        need to be registered manually:

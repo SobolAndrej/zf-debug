@@ -69,8 +69,12 @@ class ZFDebug_Controller_Plugin_Debug extends Zend_Controller_Plugin_Abstract
 
     protected $closingBracket = null;
 
-    public function __construct($options = null)
+    public function __construct(array $options = [])
     {
+        /** @var Zend_Config $config */
+        $config = Zend_Registry::get('config');
+        $options = empty($options) ? $config->get('ZFDebug') : $options;
+
         if (isset($options)) {
             if ($options instanceof Zend_Config) {
                 $options = $options->toArray();
@@ -328,7 +332,7 @@ class ZFDebug_Controller_Plugin_Debug extends Zend_Controller_Plugin_Abstract
                     #ZFDebug_offset {height: $boxHeight px;}
                     #ZFDebug {height: $boxHeight px;}
                     #ZFDebug .ZFDebug_panel {height: $panelSize;}" .
-                    file_get_contents(self::PUBLIC_DIR . "/css/debug.css") . "
+            file_get_contents(self::PUBLIC_DIR . "/css/debug.css") . "
                 </style>
                 <script type='text/javascript'>
                     var collapsed = '{$collapsed}';
