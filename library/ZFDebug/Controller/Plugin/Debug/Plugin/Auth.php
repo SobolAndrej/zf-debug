@@ -1,4 +1,5 @@
 <?php
+
 /**
  * ZFDebug Zend Additions
  *
@@ -8,14 +9,6 @@
  * @copyright  Copyright (c) 2008-2009 ZF Debug Bar Team (http://code.google.com/p/zfdebug)
  * @license    http://code.google.com/p/zfdebug/wiki/License     New BSD License
  * @version    $Id: $
- */
-
-/**
- * @category   ZFDebug
- * @package    ZFDebug_Controller
- * @subpackage Plugins
- * @copyright  Copyright (c) 2008-2009 ZF Debug Bar Team (http://code.google.com/p/zfdebug)
- * @license    http://code.google.com/p/zfdebug/wiki/License     New BSD License
  */
 class ZFDebug_Controller_Plugin_Debug_Plugin_Auth implements ZFDebug_Controller_Plugin_Debug_Plugin_Interface
 {
@@ -48,13 +41,6 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Auth implements ZFDebug_Controller_
     protected $role = 'role';
 
     /**
-     * Contains Acls for this application
-     *
-     * @var Zend_Acl
-     */
-    protected $acl;
-
-    /**
      * Create ZFDebug_Controller_Plugin_Debug_Plugin_Auth
      *
      * @var array $options
@@ -79,7 +65,7 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Auth implements ZFDebug_Controller_
     {
         return $this->identifier;
     }
-    
+
     /**
      * Returns the base64 encoded icon
      *
@@ -99,17 +85,24 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Auth implements ZFDebug_Controller_
     {
         $role = 'Unknown Role';
 
-        if (!$this->auth->hasIdentity()) {
-            return 'Not authorized';
-        }
-        $identity = $this->auth->getIdentity();
-        if (is_object($identity)) {
-            $username = $this->auth->getIdentity()->{$this->user};
-            $role = $this->auth->getIdentity()->{$this->role};
+        if (!$this->auth || !$this->auth->hasIdentity()) {
+            $tab = 'Not authorized';
         } else {
-            $username = $this->auth->getIdentity();
+            try {
+                $identity = $this->auth->getIdentity();
+                if (is_object($identity)) {
+                    $username = $this->auth->getIdentity()->{$this->user};
+                    $role = $this->auth->getIdentity()->{$this->role};
+                } else {
+                    $username = $this->auth->getIdentity();
+                }
+                $tab = $username . ' (' . $role . ')';
+            } catch (Exception $e) {
+                $tab = 'Can not identify user';
+            }
         }
-        return $username . ' (' . $role . ')';
+
+        return $tab;
     }
 
     /**
