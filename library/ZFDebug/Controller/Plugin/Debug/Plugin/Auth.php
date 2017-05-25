@@ -47,7 +47,14 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Auth implements ZFDebug_Controller_
      */
     public function __construct(array $options = [])
     {
-        $this->auth = Zend_Auth::getInstance();
+        /** @var Zend_Config $config */
+        $config = Zend_Registry::get('config');
+        $authClass = empty($options['authClass'])
+            ? ($config->get('ZFDebug') && $config->get('ZFDebug')->get('authClass')
+                ? $config->get('ZFDebug')->get('authClass') : 'Zend_Auth')
+            : $options['authClass'];
+
+        $this->auth = $authClass::getInstance();
         if (isset($options['user'])) {
             $this->user = $options['user'];
         }
