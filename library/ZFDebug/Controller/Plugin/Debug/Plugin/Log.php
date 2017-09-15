@@ -1,14 +1,4 @@
 <?php
-/**
- * ZFDebug Zend Additions
- *
- * @category   ZFDebug
- * @package    ZFDebug_Controller
- * @subpackage Plugins
- * @copyright  Copyright (c) 2008-2009 ZF Debug Bar Team (http://code.google.com/p/zfdebug)
- * @license    http://code.google.com/p/zfdebug/wiki/License     New BSD License
- * @version    $Id$
- */
 
 /**
  * @category   ZFDebug
@@ -120,13 +110,14 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_Log extends Zend_Controller_Plugin_
      * Sets a time mark identified with $name
      *
      * @param string $name
+     * @param bool $logFirst
      */
     public function mark($name, $logFirst = false)
     {
         if (isset($this->marks[$name])) {
-            $this->marks[$name]['time'] = round((microtime(true) - $_SERVER['REQUEST_TIME']) * 1000 - $this->marks[$name]['time']) . 'ms';
+            $this->marks[$name]['time'] = round((microtime(true) - $_SERVER['REQUEST_TIME']) * 1000 - (int) $this->marks[$name]['time']) . 'ms';
             if (function_exists('memory_get_usage')) {
-                $this->marks[$name]['memory'] = round((memory_get_usage() - $this->marks[$name]['memory']) / 1024) . 'K';
+                $this->marks[$name]['memory'] = round((memory_get_usage() - (int) $this->marks[$name]['memory']) / 1024) . 'K';
             } else {
                 $this->marks[$name]['memory'] = 'N/A';
             }
