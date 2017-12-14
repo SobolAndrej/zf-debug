@@ -113,7 +113,7 @@ class ZFDebug_Controller_Plugin_Debug_Plugin_File extends ZFDebug_Controller_Plu
         $html = '<h4>' . count($included).' files included worth ';
         $size = 0;
         foreach ($included as $file) {
-            $size += filesize($file);
+            $size += (int)@filesize($file);
         }
         $html .= round($size/1024, 1).'K</h4>';
 
